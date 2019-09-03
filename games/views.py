@@ -8,7 +8,7 @@ from rest_framework import status, permissions
 
 # App/DB specific imports
 from games.models import Game, Block
-from games.serializers import GameSerializer
+from games.serializers import GameSerializer, BlockSerializer
 
 
 class Games(APIView):
@@ -48,3 +48,27 @@ class GameDetails(APIView):
         # Return the new data in a GameSerializer
         serializer = GameSerializer(game, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class BlockDetails(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def patch(self, request, block_id):
+        """
+        This method will update block data and return the new game state
+        :param request: PATCH
+        :param block_id: Primary key of the block
+        :return: 200 if block is updated, 400 or 404 otherwise
+        """
+        block = get_object_or_404(Block, pk=block_id)
+
+        # Update the block and return new game state
+        serializer = BlockSerializer(block, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            serializer = GameSerializer(block.game, many=False)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        # If 400 errors, let the user be aware of them
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
