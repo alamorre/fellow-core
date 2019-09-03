@@ -12,6 +12,7 @@ from games.serializers import GameSerializer, BlockSerializer
 
 # Helper packages
 import random
+from games.sweeper import sweeper
 
 
 class Games(APIView):
@@ -75,6 +76,13 @@ class BlockDetails(APIView):
         serializer = BlockSerializer(block, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
+
+            # If the block is flipped, start the sweep
+            block = get_object_or_404(Block, pk=block_id)
+            if block.is_flipped:
+                sweeper.breadth_first_sweep(block)
+
+            # Return the new game state
             serializer = GameSerializer(block.game, many=False)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
