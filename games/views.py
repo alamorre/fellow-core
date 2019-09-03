@@ -10,6 +10,9 @@ from rest_framework import status, permissions
 from games.models import Game, Block
 from games.serializers import GameSerializer, BlockSerializer
 
+# Helper packages
+import random
+
 
 class Games(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -26,6 +29,12 @@ class Games(APIView):
         # For 0 to 99, create a block for this game with i as index
         for i in range(0, 100):
             Block.objects.create(game=game, index=i)
+
+        # Make 12 random mines on the board
+        for mine in random.sample(range(1, 100), 12):
+            block = Block.objects.get(game=game, index=mine)
+            block.is_mine = True
+            block.save()
 
         # Return the new data in a GameSerializer
         serializer = GameSerializer(game, many=False)
