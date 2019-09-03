@@ -16,3 +16,6 @@ class Block(models.Model):
     is_mine = models.BooleanField(default=False)
     is_flipped = models.BooleanField(default=False)
     is_flagged = models.BooleanField(default=False)
+
+    def __str__(self):
+        return str(self.game.pk) + ' - ' + str(self.index)
