@@ -102,11 +102,14 @@ class Sweeper:
         """
         # Put the first block into the queue
         q = BlockQueue()
+        visited = BlockQueue()
         q.enqueue(first_block)
 
         # Keep filling the queue with 0 blocks
         while not q.is_empty():
             block = q.dequeue()
+            visited.enqueue(block)
+            print(str(block))
 
             # Check if the block has no nearby mines
             if check_no_mines(block):
@@ -116,7 +119,7 @@ class Sweeper:
                 # Try flipping then adding the top block to queue
                 temp = get_top(block)
                 if temp is not None:
-                    if check_no_mines(temp) and not temp.is_flipped:
+                    if check_no_mines(temp) and temp not in visited.items:
                         q.enqueue(temp)
                     temp.is_flipped = True
                     temp.save()
@@ -124,7 +127,7 @@ class Sweeper:
                 # Try flipping then adding the bottom block to queue
                 temp = get_bottom(block)
                 if temp is not None:
-                    if check_no_mines(temp) and not temp.is_flipped:
+                    if check_no_mines(temp) and temp not in visited.items:
                         q.enqueue(temp)
                     temp.is_flipped = True
                     temp.save()
@@ -132,7 +135,7 @@ class Sweeper:
                 # Try flipping then adding the left block to queue
                 temp = get_left(block)
                 if temp is not None:
-                    if check_no_mines(temp) and not temp.is_flipped:
+                    if check_no_mines(temp) and temp not in visited.items:
                         q.enqueue(temp)
                     temp.is_flipped = True
                     temp.save()
@@ -140,7 +143,7 @@ class Sweeper:
                 # Try flipping then adding the right block to queue
                 temp = get_right(block)
                 if temp is not None:
-                    if check_no_mines(temp) and not temp.is_flipped:
+                    if check_no_mines(temp) and temp not in visited.items:
                         q.enqueue(temp)
                     temp.is_flipped = True
                     temp.save()
