@@ -15,6 +15,7 @@ import random
 from games.sweeper import sweeper
 
 # Constant for number of mines (written only once)
+NUMBER_OF_BLOCKS = 100
 NUMBER_OF_MINES = 12
 
 
@@ -31,11 +32,11 @@ class Games(APIView):
         game = Game.objects.create()
 
         # For 0 to 99, create a block for this game with i as index
-        for i in range(0, 100):
+        for i in range(0, NUMBER_OF_BLOCKS):
             Block.objects.create(game=game, index=i)
 
         # Make NUMBER_OF_MINES random mines on the board
-        for mine in random.sample(range(1, 100), NUMBER_OF_MINES):
+        for mine in random.sample(range(1, NUMBER_OF_BLOCKS), NUMBER_OF_MINES):
             block = Block.objects.get(game=game, index=mine)
             block.is_mine = True
             block.save()
@@ -92,3 +93,45 @@ class BlockDetails(APIView):
         # If 400 errors, let the user be aware of them
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class WinnerGame(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        """
+        This method will create a return a won game
+        :param request: POST
+        :return: 200 with game data
+        """
+        # Create a new game
+        game = Game.objects.create(is_test=True)
+
+        # Create NUMBER_OF_BLOCKS new blocks
+        for i in range(0, NUMBER_OF_BLOCKS):
+            Block.objects.create(game=game, index=i, is_flipped=True)
+
+        # Make NUMBER_OF_MINES of Flagged mines on the board
+        for mine in random.sample(range(1, NUMBER_OF_BLOCKS), NUMBER_OF_MINES):
+            block = Block.objects.get(game=game, index=mine)
+            block.is_flipped = False
+            block.is_flagged = True
+            block.is_mine = True
+            block.save()
+
+        # Return the new data in a GameSerializer
+        serializer = GameSerializer(game, many=False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class CleanTests(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        """
+        This method will delete all games that are tests
+        :param request: POST
+        :return: 200 with message
+        """
+        Game.objects.filter(is_test=True).delete()
+        return Response({'message': 'Test games deleted!'}, status=status.HTTP_400_BAD_REQUEST)
