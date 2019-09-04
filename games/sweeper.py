@@ -7,19 +7,27 @@ class BlockQueue:
         self.visited = set()
 
     def is_empty(self):
+        """
+        This method checks if the queue is empty
+        :return: boolean on if the queue is empty
+        """
         return self.items == []
 
     def enqueue_unique(self, item):
         """
-        This function checks and adds only unique Blocks in O(1)
-        :param item:
-        :return:
+        This method checks and adds only unique Blocks in O(1)
+        :param item: Block obj
+        :return: void
         """
         if item not in self.visited:
             self.items.insert(0, item)
             self.visited.add(item)
 
     def dequeue(self):
+        """
+        This method removes the oldest item from queue
+        :return: Block obj
+        """
         return self.items.pop()
 
 
@@ -123,7 +131,6 @@ class Sweeper:
         # Keep filling the queue with 0 blocks
         while not q.is_empty():
             block = q.dequeue()
-            print(str(block))
 
             # Check if the block has no nearby mines
             if check_no_mines(block):
