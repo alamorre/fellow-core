@@ -14,6 +14,9 @@ from games.serializers import GameSerializer, BlockSerializer
 import random
 from games.sweeper import sweeper
 
+# Constant for number of mines (written only once)
+NUMBER_OF_MINES = 12
+
 
 class Games(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -31,8 +34,8 @@ class Games(APIView):
         for i in range(0, 100):
             Block.objects.create(game=game, index=i)
 
-        # Make 12 random mines on the board
-        for mine in random.sample(range(1, 100), 12):
+        # Make NUMBER_OF_MINES random mines on the board
+        for mine in random.sample(range(1, 100), NUMBER_OF_MINES):
             block = Block.objects.get(game=game, index=mine)
             block.is_mine = True
             block.save()

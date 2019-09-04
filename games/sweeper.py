@@ -2,9 +2,13 @@ from games.models import Block
 
 
 class BlockQueue:
+    """
+    This data structure queue's blocks, but only once (to reduce looping and redundancy)
+    """
+
     def __init__(self):
-        self.items = []
-        self.visited = set()
+        self.items = []         # Blocks to be visited in a BFS order
+        self.visited = set()    # Visited Blocks cannot be added again
 
     def is_empty(self):
         """
@@ -161,7 +165,7 @@ class Sweeper:
                     temp.is_flipped = True
                     temp.save()
 
-                # Flip then try enqueueing the right block
+                # Flip then try enqueueing the right  block
                 temp = get_right(block)
                 if temp is not None:
                     if check_no_mines(temp):
