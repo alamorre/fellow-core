@@ -2,7 +2,8 @@ from django.db import models
 
 
 class Game(models.Model):
-    state_key = models.CharField(blank=True, null=True, max_length=1000)
+    # Is this game part of an automation test
+    is_test = models.BooleanField(default=False)
 
 
 class Block(models.Model):
