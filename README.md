@@ -1,5 +1,5 @@
 # Fellow Core
-Server for fellow interview game.
+Server for Fellow interview game.
 
 ### Before Starting
 Make sure you have a virtual environment set up. Choose one of the two options
