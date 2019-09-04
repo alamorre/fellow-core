@@ -14,5 +14,6 @@ urlpatterns = [
     # Handle test endpoints
     url(r'^loser/$', views.LoserGame.as_view()),
     url(r'^winner/$', views.WinnerGame.as_view()),
+    url(r'^big_sweep/$', views.BigSweep.as_view()),
     url(r'^clean_tests/$', views.CleanTests.as_view()),
 ]

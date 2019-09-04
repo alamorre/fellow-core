@@ -101,6 +101,27 @@ class BlockDetails(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class BigSweep(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        """
+        This method will create a game with big sweep potential
+        :param request: POST
+        :return: Game data for a big sweep
+        """
+        # Create a new test game
+        game = Game.objects.create(is_test=True)
+
+        # Put a mine in the bottom right corner
+        block = Block.objects.get(game=game, index=99)
+        block.is_mine = True
+        block.save()
+
+        # Return the new data in a GameSerializer
+        return Response(serialize_blocks(game), status=status.HTTP_200_OK)
+
+
 class WinnerGame(APIView):
     permission_classes = (permissions.AllowAny,)
 
