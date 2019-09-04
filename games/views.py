@@ -8,7 +8,7 @@ from rest_framework import status, permissions
 
 # App/DB specific imports
 from games.models import Game, Block
-from games.serializers import GameSerializer, BlockSerializer
+from games.serializers import PrivateBlockSerializer, serialize_blocks
 
 # Helper packages
 import random
@@ -37,9 +37,7 @@ class Games(APIView):
             block.save()
 
         # Return the new data in a GameSerializer
-        game.save()
-        serializer = GameSerializer(game, many=False)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serialize_blocks(game), status=status.HTTP_200_OK)
 
 
 class GameDetails(APIView):
@@ -56,9 +54,7 @@ class GameDetails(APIView):
         game = get_object_or_404(Game, pk=game_id)
 
         # Return the new data in a GameSerializer
-        game.save()
-        serializer = GameSerializer(game, many=False)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serialize_blocks(game), status=status.HTTP_200_OK)
 
 
 class BlockDetails(APIView):
@@ -72,9 +68,10 @@ class BlockDetails(APIView):
         :return: 200 if block is updated, 400 or 404 otherwise
         """
         block = get_object_or_404(Block, pk=block_id)
+        game = block.game
 
         # Update the block and return new game state
-        serializer = BlockSerializer(block, data=request.data, partial=True)
+        serializer = PrivateBlockSerializer(block, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
 
@@ -85,21 +82,19 @@ class BlockDetails(APIView):
 
                 # Set the game to lost if it's a mine
                 if block.is_mine:
-                    block.game.has_lost = True
-                    block.game.save()
+                    game.has_lost = True
+                    game.save()
 
             # If block is flagged, check if the user won
             if block.is_flagged:
-                block.game.has_won = True                                       # Start assuming True
-                for b in Block.objects.filter(game=block.game, is_mine=True):   # Look for one counter example
+                game.has_won = True                                       # Start assuming True
+                for b in Block.objects.filter(game=game, is_mine=True):   # Look for one counter example
                     if not b.is_flagged:                                        # Set to False if found
-                        block.game.has_won = False
-                block.game.save()                                               # Save result
+                        game.has_won = False
+                game.save()                                               # Save result
 
             # Return the new game state
-            block.game.save()
-            serializer = GameSerializer(block.game, many=False)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serialize_blocks(game), status=status.HTTP_200_OK)
 
         # If 400 errors, let the user be aware of them
         else:
@@ -127,9 +122,7 @@ class WinnerGame(APIView):
             block.save()
 
         # Return the new data in a GameSerializer
-        game.save()
-        serializer = GameSerializer(game, many=False)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serialize_blocks(game), status=status.HTTP_200_OK)
 
 
 class LoserGame(APIView):
@@ -157,9 +150,7 @@ class LoserGame(APIView):
         block.save()
 
         # Return the new data in a GameSerializer
-        game.save()
-        serializer = GameSerializer(game, many=False)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serialize_blocks(game), status=status.HTTP_200_OK)
 
 
 class CleanTests(APIView):

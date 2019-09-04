@@ -14,6 +14,7 @@ class Game(models.Model):
     has_won = models.BooleanField(default=False)
     flags_left = models.PositiveIntegerField(default=0)
 
+    # Display string as game pk
     def __str__(self):
         return str(self.pk)
 
@@ -30,6 +31,10 @@ class Block(models.Model):
     is_flipped = models.BooleanField(default=False)
     is_flagged = models.BooleanField(default=False)
 
+    # Order in ascending index
+    ordering = ('index',)
+
+    # Display string as an index belonging to a game's pk
     def __str__(self):
         return str(self.game.pk) + ' - ' + str(self.index)
 
