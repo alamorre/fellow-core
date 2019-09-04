@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^blocks/(?P<block_id>[0-9]+)/$', views.BlockDetails.as_view()),
 
     # Handle test endpoints
+    url(r'^loser/$', views.LoserGame.as_view()),
     url(r'^winner/$', views.WinnerGame.as_view()),
     url(r'^clean_tests/$', views.CleanTests.as_view()),
 ]

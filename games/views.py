@@ -124,6 +124,39 @@ class WinnerGame(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class LoserGame(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        """
+        This method will create a return a won game
+        :param request: POST
+        :return: 200 with game data
+        """
+        # Create a new game
+        game = Game.objects.create(is_test=True)
+
+        # Create NUMBER_OF_BLOCKS new blocks
+        for i in range(0, NUMBER_OF_BLOCKS):
+            Block.objects.create(game=game, index=i)
+
+        # Make NUMBER_OF_MINES of mines on the board and flip them
+        for mine in random.sample(range(1, NUMBER_OF_BLOCKS), NUMBER_OF_MINES):
+            block = Block.objects.get(game=game, index=mine)
+            block.is_flipped = True
+            block.is_mine = True
+            block.save()
+
+        # Free block 99 for a hard coded test
+        block = Block.objects.get(game=game, index=99)
+        block.is_flipped = False
+        block.save()
+
+        # Return the new data in a GameSerializer
+        serializer = GameSerializer(game, many=False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class CleanTests(APIView):
     permission_classes = (permissions.AllowAny,)
 
@@ -134,4 +167,4 @@ class CleanTests(APIView):
         :return: 200 with message
         """
         Game.objects.filter(is_test=True).delete()
-        return Response({'message': 'Test games deleted!'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'Test games deleted!'}, status=status.HTTP_200_OK)
