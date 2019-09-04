@@ -31,10 +31,6 @@ class Games(APIView):
         # Start a new game
         game = Game.objects.create()
 
-        # For 0 to 99, create a block for this game with i as index
-        for i in range(0, NUMBER_OF_BLOCKS):
-            Block.objects.create(game=game, index=i)
-
         # Make NUMBER_OF_MINES random mines on the board
         for mine in random.sample(range(1, NUMBER_OF_BLOCKS), NUMBER_OF_MINES):
             block = Block.objects.get(game=game, index=mine)
@@ -42,6 +38,7 @@ class Games(APIView):
             block.save()
 
         # Return the new data in a GameSerializer
+        game.save()
         serializer = GameSerializer(game, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -60,6 +57,7 @@ class GameDetails(APIView):
         game = get_object_or_404(Game, pk=game_id)
 
         # Return the new data in a GameSerializer
+        game.save()
         serializer = GameSerializer(game, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -100,6 +98,7 @@ class BlockDetails(APIView):
                 block.game.save()                                               # Save result
 
             # Return the new game state
+            block.game.save()
             serializer = GameSerializer(block.game, many=False)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -120,10 +119,6 @@ class WinnerGame(APIView):
         # Create a new game
         game = Game.objects.create(is_test=True)
 
-        # Create NUMBER_OF_BLOCKS new blocks
-        for i in range(0, NUMBER_OF_BLOCKS):
-            Block.objects.create(game=game, index=i, is_flipped=True)
-
         # Make NUMBER_OF_MINES of Flagged mines on the board
         for mine in random.sample(range(1, NUMBER_OF_BLOCKS), NUMBER_OF_MINES):
             block = Block.objects.get(game=game, index=mine)
@@ -133,6 +128,7 @@ class WinnerGame(APIView):
             block.save()
 
         # Return the new data in a GameSerializer
+        game.save()
         serializer = GameSerializer(game, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -149,10 +145,6 @@ class LoserGame(APIView):
         # Create a new game
         game = Game.objects.create(is_test=True)
 
-        # Create NUMBER_OF_BLOCKS new blocks
-        for i in range(0, NUMBER_OF_BLOCKS):
-            Block.objects.create(game=game, index=i)
-
         # Make NUMBER_OF_MINES of mines on the board and flip them
         for mine in random.sample(range(1, NUMBER_OF_BLOCKS), NUMBER_OF_MINES):
             block = Block.objects.get(game=game, index=mine)
@@ -166,6 +158,7 @@ class LoserGame(APIView):
         block.save()
 
         # Return the new data in a GameSerializer
+        game.save()
         serializer = GameSerializer(game, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

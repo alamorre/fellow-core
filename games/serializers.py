@@ -16,7 +16,6 @@ class GameSerializer(serializers.ModelSerializer):
     Serializer for the Game model and related blocks
     """
     id = serializers.ReadOnlyField
-    state_key = serializers.ReadOnlyField
     blocks = BlockSerializer(many=True)
 
     class Meta(object):
