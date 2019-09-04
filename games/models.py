@@ -5,6 +5,11 @@ class Game(models.Model):
     # Is this game part of an automation test
     is_test = models.BooleanField(default=False)
 
+    # Progress of the game
+    has_lost = models.BooleanField(default=False)
+    has_won = models.BooleanField(default=False)
+    mines_left = models.PositiveIntegerField(default=0)
+
 
 class Block(models.Model):
     # Every block is associated to a game

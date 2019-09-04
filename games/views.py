@@ -86,6 +86,19 @@ class BlockDetails(APIView):
             if block.is_flipped:
                 sweeper.breadth_first_sweep(block)
 
+                # Set the game to lost if it's a mine
+                if block.is_mine:
+                    block.game.has_lost = True
+                    block.game.save()
+
+            # If block is flagged, check if the user won
+            if block.is_flagged:
+                block.game.has_won = True                                       # Start assuming True
+                for b in Block.objects.filter(game=block.game, is_mine=True):   # Look for one counter example
+                    if not b.is_flagged:                                        # Set to False if found
+                        block.game.has_won = False
+                block.game.save()                                               # Save result
+
             # Return the new game state
             serializer = GameSerializer(block.game, many=False)
             return Response(serializer.data, status=status.HTTP_200_OK)
