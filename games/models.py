@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+# Global constants
 from games.constants import NUMBER_OF_BLOCKS
 
 
@@ -31,6 +32,9 @@ class Block(models.Model):
     is_flipped = models.BooleanField(default=False)
     is_flagged = models.BooleanField(default=False)
 
+    # Count the nearby mines
+    nearby_mines = models.PositiveIntegerField(default=0)
+
     # Order in ascending index
     ordering = ('index',)
 
@@ -51,7 +55,7 @@ def update_flags_left(game):
 
 
 @receiver(post_save, sender=Game)
-def new_game_method(sender, instance, created, **kwargs):
+def post_save_game_method(sender, instance, created, **kwargs):
     """
     This method will create all the blocks for the flag and update the number of flags left
     :param sender: Game Class
@@ -67,4 +71,20 @@ def new_game_method(sender, instance, created, **kwargs):
     # Update the number of flags left
     if instance.flags_left is not update_flags_left(instance):
         instance.flags_left = update_flags_left(instance)
+        instance.save()
+
+
+@receiver(post_save, sender=Block)
+def post_save_block_method(sender, instance, created, **kwargs):
+    """
+    This method takes a newly saves block and updates the number of neighbouring mines
+    :param sender: Block Class
+    :param instance: Block Obj
+    :param created: is this block newly created - boolean
+    :return: void
+    """
+    # Update the number of neighbouring mines if different
+    from games.sweeper import count_nearby_mines
+    if not created and instance.nearby_mines is not count_nearby_mines(instance):
+        instance.nearby_mines = count_nearby_mines(instance)
         instance.save()

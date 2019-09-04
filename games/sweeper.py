@@ -79,9 +79,61 @@ def get_bottom_right(block):
                              index=block.index + 11) if block.index < 90 and block.index % 10 is not 9 else None
 
 
+def count_nearby_mines(block):
+    """
+    This method checks how many neighbouring blocks are mines
+    :param block: Block obj
+    :return: number of Neighbouring mine blocks - int
+    """
+    count = 0
+
+    # 1. Check top left
+    top_left = get_top_left(block)
+    if hasattr(top_left, 'is_mine') and top_left.is_mine:
+        count = count + 1
+
+    # 2. Check top center
+    top = get_top(block)
+    if hasattr(top, 'is_mine') and top.is_mine:
+        count = count + 1
+
+    # 3. Check top right
+    top_right = get_top_right(block)
+    if hasattr(top_right, 'is_mine') and top_right.is_mine:
+        count = count + 1
+
+    # 4. Check left
+    left = get_left(block)
+    if hasattr(left, 'is_mine') and left.is_mine:
+        count = count + 1
+
+    # 5. Check right
+    right = get_right(block)
+    if hasattr(right, 'is_mine') and right.is_mine:
+        count = count + 1
+
+    # 6. Check bottom left
+    bottom_left = get_bottom_left(block)
+    if hasattr(bottom_left, 'is_mine') and bottom_left.is_mine:
+        count = count + 1
+
+    # 7. Check bottom center
+    bottom = get_bottom(block)
+    if hasattr(bottom, 'is_mine') and bottom.is_mine:
+        count = count + 1
+
+    # 8. Check bottom right
+    bottom_right = get_bottom_right(block)
+    if hasattr(bottom_right, 'is_mine') and bottom_right.is_mine:
+        count = count + 1
+
+    # Return the result
+    return count
+
+
 def check_no_mines(block):
     """
-    This function checks if there are no nearby mines
+    This method checks if there are no nearby mines
     :param block: Block obj
     :return: true if no mines are near, false otherwise
     """
