@@ -29,7 +29,7 @@ def serialize_blocks(game):
     # Add private and public blocks to game
     data = []
     for block in Block.objects.filter(game=game):
-        if block.is_flipped:
+        if block.is_flipped or block.game.has_lost:
             data.append(PublicBlockSerializer(block, many=False).data)
         else:
             data.append(PrivateBlockSerializer(block, many=False).data)

@@ -121,6 +121,10 @@ class WinnerGame(APIView):
             block.is_mine = True
             block.save()
 
+        # Set the game as won
+        game.has_won = True
+        game.save()
+
         # Return the new data in a GameSerializer
         return Response(serialize_blocks(game), status=status.HTTP_200_OK)
 
@@ -148,6 +152,10 @@ class LoserGame(APIView):
         block = Block.objects.get(game=game, index=99)
         block.is_flipped = False
         block.save()
+
+        # Set the game as lost
+        game.has_lost = True
+        game.save()
 
         # Return the new data in a GameSerializer
         return Response(serialize_blocks(game), status=status.HTTP_200_OK)
