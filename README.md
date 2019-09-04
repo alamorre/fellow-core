@@ -17,7 +17,7 @@ source activate fellenv
 ```
 
 ### Getting Started
-Checkout this repo, start a virtualenv, install dependencies, then setup database:
+Steps: Checkout this repo, install dependencies, setup database then run.
 
 ```
 # Enter the codebase 
