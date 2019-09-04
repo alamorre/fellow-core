@@ -15,8 +15,7 @@ import random
 from games.sweeper import sweeper
 
 # Constant for number of mines (written only once)
-NUMBER_OF_BLOCKS = 100
-NUMBER_OF_MINES = 12
+from games.constants import NUMBER_OF_MINES, NUMBER_OF_BLOCKS
 
 
 class Games(APIView):

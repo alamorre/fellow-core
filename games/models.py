@@ -2,6 +2,8 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+from games.constants import NUMBER_OF_BLOCKS
+
 
 class Game(models.Model):
     # Is this game part of an automation test
@@ -54,7 +56,7 @@ def new_game_method(sender, instance, created, **kwargs):
     """
     # If created, create 100 blocks
     if created:
-        for i in range(0, 100):
+        for i in range(0, NUMBER_OF_BLOCKS):
             Block.objects.create(game=instance, index=i)
 
     # Update the number of flags left
