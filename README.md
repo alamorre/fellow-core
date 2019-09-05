@@ -33,3 +33,10 @@ python manage.py migrate
 # Start the server
 python manage.py runserver
 ```
+
+### Running Unit Tests
+Once you have the project downloaded, you can run the unit tests too.
+
+```
+python manage.py test
+```
