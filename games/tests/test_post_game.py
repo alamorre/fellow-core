@@ -16,9 +16,10 @@ class GamePostTestCase(APITestCase):
 
     def tearDown(self):
         """
-        For tear down, delete all games
+        For tear down, delete all games and blocks
         """
         Game.objects.all().delete()
+        Block.objects.all().delete()
 
     def test_post_new_deal_makes_correct_blocks_and_mines(self):
         # Assert there are no games and blocks
